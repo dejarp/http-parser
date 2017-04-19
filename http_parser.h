@@ -377,19 +377,19 @@ struct http_parser_url {
  *   unsigned patch = version & 255;
  *   printf("http_parser v%u.%u.%u\n", major, minor, patch);
  */
-unsigned long http_parser_version(void);
+unsigned long __attribute__((section(".irom0.text"))) http_parser_version(void);
 
-void http_parser_init(http_parser *parser, enum http_parser_type type);
+void __attribute__((section(".irom0.text"))) http_parser_init(http_parser *parser, enum http_parser_type type);
 
 
 /* Initialize http_parser_settings members to 0
  */
-void http_parser_settings_init(http_parser_settings *settings);
+void __attribute__((section(".irom0.text"))) http_parser_settings_init(http_parser_settings *settings);
 
 
 /* Executes the parser. Returns number of parsed bytes. Sets
  * `parser->http_errno` on error. */
-size_t http_parser_execute(http_parser *parser,
+size_t __attribute__((section(".irom0.text"))) http_parser_execute(http_parser *parser,
                            const http_parser_settings *settings,
                            const char *data,
                            size_t len);
@@ -401,30 +401,30 @@ size_t http_parser_execute(http_parser *parser,
  * If you are the server, respond with the "Connection: close" header.
  * If you are the client, close the connection.
  */
-int http_should_keep_alive(const http_parser *parser);
+int __attribute__((section(".irom0.text"))) http_should_keep_alive(const http_parser *parser);
 
 /* Returns a string version of the HTTP method. */
-const char *http_method_str(enum http_method m);
+const char*  __attribute__((section(".irom0.text"))) http_method_str(enum http_method m);
 
 /* Return a string name of the given error */
-const char *http_errno_name(enum http_errno err);
+const char* __attribute__((section(".irom0.text"))) http_errno_name(enum http_errno err);
 
 /* Return a string description of the given error */
-const char *http_errno_description(enum http_errno err);
+const char* __attribute__((section(".irom0.text"))) http_errno_description(enum http_errno err);
 
 /* Initialize all http_parser_url members to 0 */
-void http_parser_url_init(struct http_parser_url *u);
+void __attribute__((section(".irom0.text"))) http_parser_url_init(struct http_parser_url *u);
 
 /* Parse a URL; return nonzero on failure */
-int http_parser_parse_url(const char *buf, size_t buflen,
+int __attribute__((section(".irom0.text"))) http_parser_parse_url(const char *buf, size_t buflen,
                           int is_connect,
                           struct http_parser_url *u);
 
 /* Pause or un-pause the parser; a nonzero value pauses */
-void http_parser_pause(http_parser *parser, int paused);
+void __attribute__((section(".irom0.text"))) http_parser_pause(http_parser *parser, int paused);
 
 /* Checks if this is the final chunk of the body. */
-int http_body_is_final(const http_parser *parser);
+int __attribute__((section(".irom0.text"))) http_body_is_final(const http_parser *parser);
 
 #ifdef __cplusplus
 }

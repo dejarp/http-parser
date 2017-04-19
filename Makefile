@@ -33,11 +33,11 @@ SONAME ?= libhttp_parser.so.2.7.1
 SOEXT ?= so
 endif
 
-CC?=gcc
+CC=xtensa-lx106-elf-gcc
 AR?=ar
 
 CPPFLAGS ?=
-LDFLAGS ?=
+LDFLAGS ?= -nostdlib
 
 CPPFLAGS += -I.
 CPPFLAGS_DEBUG = $(CPPFLAGS) -DHTTP_PARSER_STRICT=1
@@ -46,13 +46,13 @@ CPPFLAGS_FAST = $(CPPFLAGS) -DHTTP_PARSER_STRICT=0
 CPPFLAGS_FAST += $(CPPFLAGS_FAST_EXTRA)
 CPPFLAGS_BENCH = $(CPPFLAGS_FAST)
 
-CFLAGS += -Wall -Wextra -Werror
+CFLAGS += -Wall -Wextra -Werror -DNDEBUG -DICACHE_FLASH -mlongcalls
 CFLAGS_DEBUG = $(CFLAGS) -O0 -g $(CFLAGS_DEBUG_EXTRA)
 CFLAGS_FAST = $(CFLAGS) -O3 $(CFLAGS_FAST_EXTRA)
 CFLAGS_BENCH = $(CFLAGS_FAST) -Wno-unused-parameter
 CFLAGS_LIB = $(CFLAGS_FAST) -fPIC
 
-LDFLAGS_LIB = $(LDFLAGS) -shared
+LDFLAGS_LIB = $(LDFLAGS) -shared -nostdlib
 
 INSTALL ?= install
 PREFIX ?= $(DESTDIR)/usr/local
@@ -64,21 +64,21 @@ ifneq (darwin,$(PLATFORM))
 LDFLAGS_LIB += -Wl,-soname=$(SONAME)
 endif
 
-test: test_g test_fast
-	$(HELPER) ./test_g$(BINEXT)
-	$(HELPER) ./test_fast$(BINEXT)
-
-test_g: http_parser_g.o test_g.o
-	$(CC) $(CFLAGS_DEBUG) $(LDFLAGS) http_parser_g.o test_g.o -o $@
-
-test_g.o: test.c http_parser.h Makefile
-	$(CC) $(CPPFLAGS_DEBUG) $(CFLAGS_DEBUG) -c test.c -o $@
-
-http_parser_g.o: http_parser.c http_parser.h Makefile
-	$(CC) $(CPPFLAGS_DEBUG) $(CFLAGS_DEBUG) -c http_parser.c -o $@
-
-test_fast: http_parser.o test.o http_parser.h
-	$(CC) $(CFLAGS_FAST) $(LDFLAGS) http_parser.o test.o -o $@
+#test: test_g test_fast
+#	$(HELPER) ./test_g$(BINEXT)
+#	$(HELPER) ./test_fast$(BINEXT)
+#
+#test_g: http_parser_g.o test_g.o
+#	$(CC) $(CFLAGS_DEBUG) $(LDFLAGS) http_parser_g.o test_g.o -o $@
+#
+#test_g.o: test.c http_parser.h Makefile
+#	$(CC) $(CPPFLAGS_DEBUG) $(CFLAGS_DEBUG) -c test.c -o $@
+#
+#http_parser_g.o: http_parser.c http_parser.h Makefile
+#	$(CC) $(CPPFLAGS_DEBUG) $(CFLAGS_DEBUG) -c http_parser.c -o $@
+#
+#test_fast: http_parser.o test.o http_parser.h
+#	$(CC) $(CFLAGS_FAST) $(LDFLAGS) http_parser.o test.o -o $@
 
 test.o: test.c http_parser.h Makefile
 	$(CC) $(CPPFLAGS_FAST) $(CFLAGS_FAST) -c test.c -o $@

@@ -483,7 +483,7 @@ int http_message_needs_eof(const http_parser *parser);
  * assumed that the caller cares about (and can detect) the transition between
  * URL and non-URL states by looking for these.
  */
-static enum state
+static enum state __attribute__((section(".irom0.text")))
 parse_url_char(enum state s, const char ch)
 {
   if (ch == ' ' || ch == '\r' || ch == '\n') {
@@ -631,7 +631,7 @@ parse_url_char(enum state s, const char ch)
   return s_dead;
 }
 
-size_t http_parser_execute (http_parser *parser,
+size_t __attribute__((section(".irom0.text"))) http_parser_execute (http_parser *parser,
                             const http_parser_settings *settings,
                             const char *data,
                             size_t len)
@@ -2092,7 +2092,7 @@ error:
 
 
 /* Does the parser need to see an EOF to find the end of the message? */
-int
+int __attribute__((section(".irom0.text")))
 http_message_needs_eof (const http_parser *parser)
 {
   if (parser->type == HTTP_REQUEST) {
@@ -2115,7 +2115,7 @@ http_message_needs_eof (const http_parser *parser)
 }
 
 
-int
+int __attribute__((section(".irom0.text")))
 http_should_keep_alive (const http_parser *parser)
 {
   if (parser->http_major > 0 && parser->http_minor > 0) {
@@ -2134,14 +2134,14 @@ http_should_keep_alive (const http_parser *parser)
 }
 
 
-const char *
+const char * __attribute__((section(".irom0.text")))
 http_method_str (enum http_method m)
 {
   return ELEM_AT(method_strings, m, "<unknown>");
 }
 
 
-void
+void __attribute__((section(".irom0.text")))
 http_parser_init (http_parser *parser, enum http_parser_type t)
 {
   void *data = parser->data; /* preserve application data */
@@ -2152,25 +2152,25 @@ http_parser_init (http_parser *parser, enum http_parser_type t)
   parser->http_errno = HPE_OK;
 }
 
-void
+void __attribute__((section(".irom0.text")))
 http_parser_settings_init(http_parser_settings *settings)
 {
   memset(settings, 0, sizeof(*settings));
 }
 
-const char *
+const char * __attribute__((section(".irom0.text")))
 http_errno_name(enum http_errno err) {
   assert(((size_t) err) < ARRAY_SIZE(http_strerror_tab));
   return http_strerror_tab[err].name;
 }
 
-const char *
+const char * __attribute__((section(".irom0.text")))
 http_errno_description(enum http_errno err) {
   assert(((size_t) err) < ARRAY_SIZE(http_strerror_tab));
   return http_strerror_tab[err].description;
 }
 
-static enum http_host_state
+static enum http_host_state __attribute__((section(".irom0.text")))
 http_parse_host_char(enum http_host_state s, const char ch) {
   switch(s) {
     case s_http_userinfo:
@@ -2252,7 +2252,7 @@ http_parse_host_char(enum http_host_state s, const char ch) {
   return s_http_host_dead;
 }
 
-static int
+static int __attribute__((section(".irom0.text")))
 http_parse_host(const char * buf, struct http_parser_url *u, int found_at) {
   enum http_host_state s;
 
@@ -2334,12 +2334,12 @@ http_parse_host(const char * buf, struct http_parser_url *u, int found_at) {
   return 0;
 }
 
-void
+void __attribute__((section(".irom0.text")))
 http_parser_url_init(struct http_parser_url *u) {
   memset(u, 0, sizeof(*u));
 }
 
-int
+int __attribute__((section(".irom0.text")))
 http_parser_parse_url(const char *buf, size_t buflen, int is_connect,
                       struct http_parser_url *u)
 {
@@ -2430,7 +2430,7 @@ http_parser_parse_url(const char *buf, size_t buflen, int is_connect,
 
   if (u->field_set & (1 << UF_PORT)) {
     /* Don't bother with endp; we've already validated the string */
-    unsigned long v = strtoul(buf + u->field_data[UF_PORT].off, NULL, 10);
+    unsigned long v = 0 ;// strtoul(buf + u->field_data[UF_PORT].off, NULL, 10);
 
     /* Ports have a max value of 2^16 */
     if (v > 0xffff) {
@@ -2443,7 +2443,7 @@ http_parser_parse_url(const char *buf, size_t buflen, int is_connect,
   return 0;
 }
 
-void
+void __attribute__((section(".irom0.text")))
 http_parser_pause(http_parser *parser, int paused) {
   /* Users should only be pausing/unpausing a parser that is not in an error
    * state. In non-debug builds, there's not much that we can do about this
@@ -2457,12 +2457,12 @@ http_parser_pause(http_parser *parser, int paused) {
   }
 }
 
-int
+int __attribute__((section(".irom0.text")))
 http_body_is_final(const struct http_parser *parser) {
     return parser->state == s_message_done;
 }
 
-unsigned long
+unsigned long __attribute__((section(".irom0.text")))
 http_parser_version(void) {
   return HTTP_PARSER_VERSION_MAJOR * 0x10000 |
          HTTP_PARSER_VERSION_MINOR * 0x00100 |
