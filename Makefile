@@ -64,6 +64,8 @@ ifneq (darwin,$(PLATFORM))
 LDFLAGS_LIB += -Wl,-soname=$(SONAME)
 endif
 
+# tests will obviously not work since you would need to find an Xtensa chip to
+# run them.
 #test: test_g test_fast
 #	$(HELPER) ./test_g$(BINEXT)
 #	$(HELPER) ./test_fast$(BINEXT)
@@ -79,15 +81,15 @@ endif
 #
 #test_fast: http_parser.o test.o http_parser.h
 #	$(CC) $(CFLAGS_FAST) $(LDFLAGS) http_parser.o test.o -o $@
-
-test.o: test.c http_parser.h Makefile
-	$(CC) $(CPPFLAGS_FAST) $(CFLAGS_FAST) -c test.c -o $@
-
-bench: http_parser.o bench.o
-	$(CC) $(CFLAGS_BENCH) $(LDFLAGS) http_parser.o bench.o -o $@
-
-bench.o: bench.c http_parser.h Makefile
-	$(CC) $(CPPFLAGS_BENCH) $(CFLAGS_BENCH) -c bench.c -o $@
+#
+#test.o: test.c http_parser.h Makefile
+#	$(CC) $(CPPFLAGS_FAST) $(CFLAGS_FAST) -c test.c -o $@
+#
+#bench: http_parser.o bench.o
+#	$(CC) $(CFLAGS_BENCH) $(LDFLAGS) http_parser.o bench.o -o $@
+#
+#bench.o: bench.c http_parser.h Makefile
+#	$(CC) $(CPPFLAGS_BENCH) $(CFLAGS_BENCH) -c bench.c -o $@
 
 http_parser.o: http_parser.c http_parser.h Makefile
 	$(CC) $(CPPFLAGS_FAST) $(CFLAGS_FAST) -c http_parser.c
